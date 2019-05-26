@@ -5,19 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Vue plus Ajax </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+  
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="main.js"></script>
+   
 </head>
 <body>
     <div id="main">
         <div class="row">
             <div class="col-md-4">
-                <h1> Lista Vuejs Ajax</h1>
-                <ul class="list-group">
-                    <li v-for="item in list" class="list-group-item">
-                        {{ item.name.first}}
-                        {{ item.name.last}}
+                <h1> VueJS Filter</h1>
+                <button class="btn btn-primary" v-on:click="getUsers" v-if="!list.length">Listar</button>
+                <ul class="list-group" v-else>
+                    <li class="list-group-item">
+                        <input type="text" name="" placeholder="Buscar.." class="form-control" v-model="name" >
+                    </li>
+                    <li v-for="item in searchUser" class="list-group-item">
+                        {{item.name}}
                     </li>
                 </ul>
             </div>
@@ -32,7 +35,7 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.1/vue-resource.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -40,17 +43,24 @@
         var UrlUsers= 'https://randomuser.me/api/?results=10';
         new Vue({
             el:'#main',
-            created:function() {
-                this.getUsers();
-            },
+           
             data:{
-                list:[]
+                list:[],
+                name:'',
             },
             methods: {
-                getUsers: function(){
-                    this.$http.get(UrlUsers).then(function(response){
-                        this.list=response.data.results;
-                    });
+               getUsers: function(){
+                    var UrlUsers='https://jsonplaceholder.typicode.com/users';
+                    axios.get(UrlUsers).then(
+                        response => {
+                            this.list=response.data
+                        }
+                    );
+               }
+            },
+            computed: {
+                searchUser: function(){
+                    return this.list.filter( (item) => item.name.includes(this.name))
                 }
             }
         });
